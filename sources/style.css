@@ -1,0 +1,48 @@
+body
+{
+
+}
+
+
+#scene
+{
+	/*border:solid;*/
+}
+
+#bouton-Login
+{
+	/*float:right;*/
+/*	margin-bottom:-36px;*/
+	position:absolute;
+	right:0px;
+	top:0px;
+}
+
+#bouton-Login img
+{
+	cursor:pointer;
+}
+
+
+#messageConnectionReussie, #messageDeconnectionReussie
+{
+	background-color:#AAFFAA;
+	text-align:center;
+	border-radius:5px;
+	font-weight:bold;
+	display:none;
+}
+#messageConnectionRatee, #messageDeconnectionRatee
+{
+	background-color:#FFAAAA;
+	text-align:center;
+	border-radius:5px;
+	font-weight:bold;
+	display:none;
+}
+
+
+#dialogOptions
+{
+	display:none;
+}
