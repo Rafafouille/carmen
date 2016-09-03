@@ -148,7 +148,7 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 
 		<!--------- Scene ou va se dessiner  la carte mentale --------->
 		<div id="scene" style="margin:0px;padding:0px;">⌛ Chargement... (Si ce message reste apparent après plusieurs secondes, c'est qu'il y a un problème.
-						reportez-vous au site <a href="http://carment.allais.eu">carment.allais.eu</a>)</div>
+						reportez-vous au site <a href="http://carmen.allais.eu">carmen.allais.eu</a>)</div>
 
 
 
