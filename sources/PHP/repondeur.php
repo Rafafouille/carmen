@@ -65,20 +65,17 @@ if($action=="loadChildren" || $action=="loadIcone")
 							echo "		<fichier nom=\"$f\" type=\"texte\"  texte=\"$texte\" bloque=\"$bloque\"/>\n";
 						}
 					elseif(is_file("../../".$dossierScan."/".$f))	//Si c'est un fichier... mais pas un lien ni un texte !
-						echo "		<fichier nom=\"$f\" type=\"fichier\"  bloque=\"$bloque\"/>\n";
+						{
+							$idLien=-1;
+							if($activeMiroir)	//Si on ne veut pas afficher les liens...
+							{
+								$lienASauver=array("dos"=>"../../".$dossierScan."/","nom"=>$f);
+								$idLien=count($_SESSION['listeDesLiens']);
+								$_SESSION['listeDesLiens'][$idLien]=$lienASauver;
+							}
+							echo "		<fichier nom=\"$f\" type=\"fichier\"  bloque=\"$bloque\" idLien=\"".$idLien."\"/>\n";
+						}
 
-
-					/*echo "		<fichier nom=\"".$nom."\" type=\"".$type."\"  ";
-
-					if($lien!="")
-						echo "lien=\"".htmlentities($lien)."\" ";
-
-					//Si bloqué ?
-					if(autoriseAffiche($f,"../../".$dossierScan,true))
-						echo "bloque=\"libre\"";
-					else
-						echo "bloque=\"bloque\"";
-					echo "/>\n";*/
 				}
 		}
 	echo "	</listeFichiers>\n";

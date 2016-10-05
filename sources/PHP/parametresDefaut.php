@@ -27,6 +27,7 @@ $autoriseModifierOptions=true;	//Autorise de modifier les options lors de la nav
 $autoriseSautLigneTitre=true;	//Formate les titres des bulles en remplaçant (ou non) les caractères indiqués la variable $caractereSautLigneTitre par des sauts de ligne "/n".
 $caractereSautLigneTitre="§";	//Lorsque la variable $autoriseSautLigneTitre est à "true", le caractère contenu dans cette variable sert de séparateur de ligne (string)
 $titrePage="";			//Titre de la page (html). Si vide (""), le titre sera le nom du dossier racine.
+$activeMiroir=true;	//Active la redirection via un "miroir" quand on télécharge une fichier (pour pas voir l'adresse)
 
 $login="";	//Login par défaut (pour une connection auto...)
 $mdp="";	//Mot de passe par défaut (idem)

@@ -6,7 +6,7 @@ session_start();
 //===========================================
 include_once("./sources/PHP/parametresDefaut.php");	//Par defaut...
 include_once("./parametres.php");	//...ecrasée par les parametres perso
-$version="16.1.23";
+$version="16.10.3";
 
 
 //===========================================
@@ -18,6 +18,9 @@ if(!isset($_SESSION['connecte']))
 	$_SESSION['connecte']=false;
 if(!isset($_SESSION['admin']))
 	$_SESSION['admin']=false;
+
+//Historique des liens
+$_SESSION['listeDesLiens']=array();
 
 if(isset($_POST['login-user'])) $login=$_POST['login-user'];
 if(isset($_POST['login-mdp'])) $login=$_POST['login-mdp'];
@@ -76,9 +79,6 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 					echo "\t\t\tcouleurBulleFichiers=\"".$couleurBullesFichiers."\";\n";
 					echo "\t\t\tcouleurBulleLiens=\"".$couleurBullesLiens."\";\n";
 					echo "\t\t\tcouleurBulleTexte=\"".$couleurBullesTexte."\";\n";
-					/*echo "\t\t\topaciteBulleDossiers=\"".$opaciteBullesDossiers."\";\n";
-					echo "\t\t\topaciteBulleFichiers=\"".$opaciteBullesFichiers."\";\n";
-					echo "\t\t\topaciteBulleLiens=\"".$opaciteBullesLiens."\";\n";*/
 					echo "\t\t\tafficheExtensions=";
 						echo $afficheExtensions ? "true;\n" : "false;\n";
 					echo "\t\t\tnomBulleRacine=\"".$nomBulleRacine."\";\n";
@@ -99,6 +99,8 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 					echo "\t\t\tautoriseSautLigneTitre=";
 						echo ($autoriseSautLigneTitre && $caractereSautLigneTitre!="") ?"true;\n" : "false;\n";
 					echo "\t\t\tcaractereSautLigneTitre=\"".$caractereSautLigneTitre."\";\n";
+					echo "\t\t\tactiveMiroir=";
+						echo ($activeMiroir) ?"true;\n" : "false;\n";
 				
 			?>
 

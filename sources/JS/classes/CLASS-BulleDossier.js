@@ -111,7 +111,7 @@ var BulleDossier = function(argPath)
 		this.loadChildren=function(open)
 			{
 				var ceci=this;	//Reference vers le parent (probleme de contexte...)
-				$.post(		"./sources/PHP/repondeur.php",		//URL de la requete
+				$.post("./sources/PHP/repondeur.php",		//URL de la requete
 						{
 							action:"loadChildren",	//Action a executer par le post
 							dossierScan:this.path()	//chemin
@@ -138,11 +138,17 @@ var BulleDossier = function(argPath)
 										var lien=file.getAttribute("lien");	//...son lien (s'il existe)
 										var bloque=file.getAttribute("bloque");	//...S'il est bloqué
 										var texte=file.getAttribute("texte");	//...son texte
+										var idLien=file.getAttribute("idLien");	//...son n° de lien (voir Session PHP)
 										var dos=ceci.path();		//...on recupère son emplacement
 											if(type=="dossier")	//Si c'est de type dossier...
 												var bulleEnfant=new BulleDossier(dos+"/"+nom);
 											else if(type=="fichier")	//Si c'est de type fichier...
-												var bulleEnfant=new BulleFichier(dos+"/"+nom);
+												{
+													if(activeMiroir)
+															var bulleEnfant=new BulleFichier(dos+"/"+nom,idLien);
+													else
+															var bulleEnfant=new BulleFichier(dos+"/"+nom,-1);
+												}
 											else if(type=="lien")	//Si c'est de type lien...
 												var bulleEnfant=new BulleLien(dos+"/"+nom,nom.replace(".rac",""),lien);
 											else if(type=="texte")	//Si c'est de type texte...

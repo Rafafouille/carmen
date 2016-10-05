@@ -142,4 +142,11 @@ $caractereSautLigneTitre="§";
 // Si vide (""), le titre sera le nom du dossier racine.
 //(string)
 $titrePage="";
+
+//************************************************************
+// Active la redirection des adresses lorsqu'on télécharge un fichier
+// (pour pas voir le chemin d'accès à un fichier)
+$activeMiroir=true;
+
+
 ?>

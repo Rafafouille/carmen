@@ -1,4 +1,4 @@
-var BulleFichier = function(argPath)
+var BulleFichier = function(argPath,argIdLien)
 {
 	//==========================
 	//Constructeur issu de l'heritage
@@ -10,7 +10,8 @@ var BulleFichier = function(argPath)
 	//Variables Membres
 	//==========================
 	
-		this._path=argPath;	//Chemin relatif à l'objet à afficher
+		this._path=argPath;	//Chemin relatif à l'objet à afficher OU numero du lien (voir le tableau des liens en PHP)
+		this._idLien=argIdLien;	//
 		this._type="fichier"		//Type de bulle
 		this.backgroundColor(couleurBulleFichiers);	//Couleur de la bulle
 		//this._afficheOmbre=true;	//Affiche ombre
@@ -31,7 +32,14 @@ var BulleFichier = function(argPath)
 					this._path=p;
 				return this._path;
 			}
-			
+
+			//Affecte/renvoie le n° id du lien sur la session PHP
+		this.idLien=function(i)
+			{
+				if(typeof(i)!='undefined')
+					this._idLien=i;
+				return this._idLien;
+			}	
 	//==========================
 	//Autres fonctions membres
 	//==========================
@@ -168,7 +176,10 @@ var BulleFichier = function(argPath)
 		//Action a effectuer lors d'un double click
 		this.actionDoubleClick=function()
 		{
-			window.open(this.path());
+			if(activeMiroir)
+					window.open("sources/PHP/miroir.php?miroir="+this.idLien());
+			else
+					window.open(this.path());
 			return false;
 		}
 		
