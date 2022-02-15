@@ -99,7 +99,6 @@ function createFichierConfig($dossier)
 	{
 		if(file_exists($dossier."/.carte-mentale"))//S'il existe déjà...
 			return;//On ne le crée pas
-
 		$monfichier = fopen($dossier."/.carte-mentale", 'a+');
 		$texte='<?xml version = "1.0" encoding="UTF-8" standalone="yes" ?>
 <config>

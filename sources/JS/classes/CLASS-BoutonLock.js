@@ -1,40 +1,84 @@
-var BoutonLock = function()
+
+// Bouton lock
+class BoutonLock extends BoutonMenu
 {
 	//==========================
 	//Constructeur issu de l'heritage
 	//==========================
+		constructor()
+		{
+		
+			super("lock"); //Constructeur de la classe mère
+			this.name = "Bouton Lock"
+			
+			
+			// GRAPHISME
+				
+			this.Gtitre.visible = false ;
+			this.GlockOpen = new createjs.Bitmap("./sources/icones/unlock.png");
+			this.GlockOpen.scale = 20/64. ;
+			this.GlockOpen.x = 2 ;
+			this.GlockOpen.y = 2 ;
+			this.Gcontenu.addChild(this.GlockOpen) ;
+			this.GlockOpen.setBounds(2,2,64,64) ; // Dimesions de l'image (pour qu'elle soit accessible, meme si elle est pas encore chargée)
+			
+			this.GlockClosed = new createjs.Bitmap("./sources/icones/lock.png") ;
+			this.GlockClosed.scale = 20/64. ;
+			this.GlockClosed.x = 2 ;
+			this.GlockClosed.y = 2 ;
+			this.Gcontenu.addChild(this.GlockClosed) ;
+			this.GlockClosed.setBounds(2,2,64,64) ; // Dimesions de l'image (pour qu'elle soit accessible, meme si elle est pas encore chargée)
+			
+			this.redessineArrierePlan() // Dessine / redessine le rectangle
+			
+			this.locked(false); // Par defaut
+			
+			
+			this.on("mouseover",this.inverseGraphique);
+			this.on("mouseout",this.retablitGraphique) ;
+			
 
-		BoutonMenu.call(this,"lock");
-
-
+		}
+		
+		
 	//==========================
 	//Variables Membres
 	//==========================
 	
-		this._couleurOpen="#55FF55";
-		this._couleurClose="#FF0000";
-		this._locked=false;
-
+		_couleurOpen="#55FF55";
+		_couleurClose="#FF0000";
+		_locked=false;
+		
 	//==========================
 	//getter/setter
 	//==========================
 	
-		this.couleurOpen=function(c)
+		couleurOpen(c)
 			{
 				if(typeof(c)!='undefined')
 					this._couleurOpen=c;
 				return this._couleurOpen;
 			}	
-		this.couleurClose=function(c)
+		couleurClose(c)
 			{
 				if(typeof(c)!='undefined')
 					this._couleurClose=c;
 				return this._couleurClose;
 			}
-		this.locked=function(l)
+		locked(l)
 			{
 				if(typeof(l)!='undefined')
+				{
 					this._locked=l;
+					if(l) // Si bloqué
+					{
+						this.lockGraphique(); // Change l'allure du bouton
+					}
+					else // Si débloqué
+					{
+						this.unlockGraphique();
+					}
+				}
 				return this._locked;
 			}
 
@@ -42,129 +86,89 @@ var BoutonLock = function()
 	//Autres fonctions membres
 	//==========================
 
-
-		this.unlock=function()
+		//Envoie une requete pour débloquer la bulle sur le serveur
+		unlock()
 		{
 			var ceci=this;
 			$.post(		"./sources/PHP/repondeur.php",
 					{
 						action:"unlock",
-						pathLock:ceci.parent.parent.parent.path()
+						pathLock:ceci.parent.parent.path()
 					},
 					function(reponse)
 						{
 							if(reponse=="OK")
-								ceci.unlockGraphique();
+								ceci.locked(false);
 						},
 					"text"
 				);
 			
 			
 		}
-
-		this.unlockGraphique=function()
+		//callback de this.unlock()
+		unlockGraphique()
 		{
-			this.locked(false);//On ouvre
-			this.KarrierePlan.fill(this.couleurOpen());
-			this.KlockClosed.visible(false);
-			this.KlockOpen.visible(true);
-			scene.draw();
+			this.couleurBouton(this.couleurOpen());
+			this.GlockOpen.visible = true;
+			this.GlockClosed.visible = false;
 		}
 	
-		this.lock=function()
+		//Envoie une requete pour bloquer la bulle sur le serveur
+		lock()
 		{
+			console.log(this)
 			var ceci=this;
 			$.post(		"./sources/PHP/repondeur.php",
 					{
 						action:"lock",
-						pathLock:ceci.parent.parent.parent.path()
+						pathLock:this.parent.parent.path()
 					},
 					function(reponse)
 						{
 							if(reponse=="OK")
-								ceci.lockGraphique();
+								ceci.locked(true);
 						},
 					"text"
 				);
 		}
 	
-
-		this.lockGraphique=function()
+		//callback de this.lock()
+		lockGraphique=function()
 		{
-			this.locked(true);//On ferme
-			this.KarrierePlan.fill(this.couleurClose());
-			this.KlockClosed.visible(true);
-			this.KlockOpen.visible(false);
-			scene.draw();
+			this.couleurBouton(this.couleurClose());
+			this.GlockOpen.visible = false;
+			this.GlockClosed.visible = true;
 		}
 
-		this.actionClick=function()
+
+		actionClick(event,data)
 		{
-			if(this.locked())//Si fermé
-				this.unlock();
+			var ceci = data.objet
+			if(ceci.locked())//Si fermé
+				ceci.unlock();
 			else
-				this.lock();
+				ceci.lock();
 		}
-	
-	//==========================
-	//Graphismes
-	//==========================
-
-		if(this.locked())
-			this.KarrierePlan.fill(this.couleurClose());
-		else
-			this.KarrierePlan.fill(this.couleurOpen());
-		this.KarrierePlan.width(22);
-		this.KarrierePlan.height(22);
-		this.Ktitre.visible(false);
 		
-		var ceci=this;
-		var imageOpen = new Image();
-		imageOpen.onload = function() {
-				ceci.KlockOpen= new Kinetic.Image({
-					x: 1,
-					y: 1,
-					image: imageOpen,
-					width: 20,
-					height: 20,
-					visible: !ceci.locked()
-				});
-				ceci.add(ceci.KlockOpen);
-			};
-		imageOpen.src = 'sources/icones/unlock.png';
-			
-		var imageClose = new Image();
-		imageClose.onload = function() {
-				ceci.KlockClosed= new Kinetic.Image({
-					x: 1,
-					y: 1,
-					image: imageClose,
-					width: 20,
-					height: 20,
-					visible: ceci.locked()
-				});
-				ceci.add(ceci.KlockClosed);
-			};
-		imageClose.src = 'sources/icones/lock.png';
-
-
-	
-	//==========================
-	//Evenements
-	//==========================
-
 		
-
-
-	//==========================
-	//Construction...
-	//==========================
-
-
-
+		// Change le vert en rouge et vis et versa (utile quand on passe la souris)
+		inverseGraphique()
+		{
+			if(this._locked)
+				this.unlockGraphique();
+			else
+				this.lockGraphique();
+		}
+		
+		
+		// remets le vert en rouge et vis et versa (utile quand on passe la souris)
+		retablitGraphique()
+		{
+			if(this._locked)
+				this.lockGraphique();
+			else
+				this.unlockGraphique();
+		}
+		
 }
-BoutonLock.prototype = Object.create(BoutonMenu.prototype);//On recopie le prototype de Kinteic.Group
-BoutonLock.prototype.constructor = BoutonLock;//On recopie le constructeur de Noeud dans son prototype
-
-
 

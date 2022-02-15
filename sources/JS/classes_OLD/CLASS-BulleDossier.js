@@ -1,130 +1,89 @@
-class BulleDossier extends Bulle
+var BulleDossier = function(argPath)
 {
 	//==========================
 	//Constructeur issu de l'heritage
 	//==========================
-	constructor(_argPath)
-	{
-		super(); //Constructeur de la classe mère
-		this.name = "Bulle dossier"
-		
-		this._path = _argPath ;	//Chemin du dossier
-		this.backgroundColor(couleurBulleDossiers);	//Couleur de la bulle (voir dans le index.php)
-		this.strokeColor("#000000");	//Couleur des lignes
-		this.titre(_argPath.replace(/^.*(\\|\/|\:)/, ''));//Par defaut : on donne le nom du dossie comme titre
-		
-		
-		// Graphismes
-		this.addChild(this.groupeEnfants);
-		this.setChildIndex(this.groupeEnfants,0) // On met les enfants en arrière plan (position 0 dans le z-index)
-		
-		this.chercheIcone(); // Cherche une icone sur le serveur
-		
-		//Evévements
-		var ceci=this;
 
-		this.groupeBulle.on("click", function(evt)
-					{
-						if(evt.nativeEvent.which==1) // Si c'est un click gauche
-						{
-							if(this.parent._vientDeBouger) // Si on vient de faire un pressmove
-								this.parent._vientDeBouger = false ; //On ouvre pas
-							else
-								ceci.ouvrirOuFermerEnfants();	
-						}
-					});
-					
-		this.groupeEnfants.name = "groupeEnfants"
-	}
-
-
-
+		Bulle.call(this);
+		
+		
 	//==========================
 	//Variables Membres
 	//==========================
 	
-		//_path = "";	//Chemin relatif à l'objet à afficher
-		_type = "dossier";
-		_enfantsOuverts = false;	//Est-ce que les enfants sont ouverts
-		_dejaOuvert=false;	//Vaut faux tant qu'on n'a pas ouvert le dossier au moins une fois (notament avec les images qui viennent d'être chargée)
-		_espaceEntreBoite = 20;	//espace entre 2 boites (enfants ?) verticalement
-
-		groupeEnfants = new createjs.Container();
-		
+		this._path=argPath;	//Chemin relatif à l'objet à afficher
+		this._type="dossier";
+		this.backgroundColor(couleurBulleDossiers);	//Couleur de la bulle
+		this.strokeColor("#000000");	//Couleur des lignes
+		this._enfantsOuverts=false;	//Est-ce que les enfants sont ouverts
+		//this.afficheOmbre(true);	//Affiche ombre
+		this.titre(argPath.replace(/^.*(\\|\/|\:)/, ''));//Par defaut : on donne le nom du dossie comme titre
+		this._dejaOuvert=false;	//Vaut faux tant qu'on n'a pas ouvert le dossier
+		this._espaceEntreBoite=20;	//espace entre 2 boites verticalement
 		
 	//==========================
 	//getter/setter
 	//==========================
 	
 		//Affecte/renvoie le chemin du lien associé
-		/*path(p)
+		this.path=function(p)
 			{
 				if(typeof(p)!='undefined')
 					this._path=p;
 				return this._path;
-			}*/
+			}
 	
 		//Dit si les bulles-enfant sont ouvertes
 		// Faut-il autoriser l'écriture ?????????????????
-		enfantsOuverts(o)
+		this.enfantsOuverts=function(o)
 			{
 				if(typeof(o)!='undefined')
 					this._enfantsOuverts=o;
-
 				return this._enfantsOuverts;
-
 			}
 		
 		//renvoi le nombre d'enfants (0 si non chargé)
-		childrenLoaded()
+		this.childrenLoaded=function()
 			{
-				return this.groupeEnfants.children.length;
+				return this.Kenfants.children.length;
 			}
 		
-
 		//Renvoie la liste des enfants		
-		getListeEnfants()
-
+		this.getListeEnfants=function()
 			{
-				return this.groupeEnfants.children;
+				return this.Kenfants.children;
 			}
 			
-
 		//Renvoie la liste des enfants		
-		dejaOuvert(d)
+		this.dejaOuvert=function(d)
 			{
 				if(typeof(d)!='undefined')
 					this._dejaOuvert=d;
 				return this._dejaOuvert;
 			}
 			
-		//Renvoie la liste des enfants
-		espaceEntreBoite(e)
+		//Renvoie la liste des enfants		
+		this.espaceEntreBoite=function(e)
 			{
 				if(typeof(e)!='undefined')
 					this._espaceEntreBoite=e;
-
 				return this._espaceEntreBoite;
 			}
-			
-			
-			
+
+
 	//==========================
 	//Autres fonctions membres
 	//==========================
-	
-		// ******************************************************************************************************
-		//Redessine la bulle (pour remettre le noms aux dimensions) dans le cas particulier des dossiers
-		// ECRASE L'ANCIEN (classe mere Bulle)
-		/*redessine()
+		//Redessine la bulle (pour remettre le noms aux dimensions)
+		this.redessine=function()
 			{
-				//Texte
-				this.redessineTitre()
-				//Image (si elle existe)
-				this.replaceIcone()
-				//rectangle
-				this.redessineContour();
+				this.Ktexte.text(this.formateTitre(this.titre()));
+				this.Ktexte.x(0);
+				this.Ktexte.y(0);
 				
+				this.Kicone.x(this.Ktexte.width()/2-this.Kicone.width()/2);
+				this.Kicone.y(this.Ktexte.y()+this.Ktexte.height());
+
 				this.Kcontour.x(Math.min(this.Ktexte.x(),this.Kicone.x())-this.margin());
 				this.Kcontour.y(this.Ktexte.y()-this.margin());
 				this.Kcontour.width(Math.max(this.Ktexte.width(),this.Kicone.width())+2*this.margin());
@@ -132,22 +91,10 @@ class BulleDossier extends Bulle
 				
 				this.groupeBulle.x(-this.groupeBulle.getWidth()/2-this.Kcontour.x());	//Le Kcontour est du au fait que l'origine du groupeBulle est le texte (et non le bord de la bulle)
 				this.groupeBulle.y(-this.groupeBulle.getHeight()/2-this.Kcontour.y());
-			}*/
-		// Fonction qui calcule la position de l'icone dans le cas d'un dossier
-		// REMPLACE L'ANCIEN (classe mere Bulle)
-		replaceIcone()
-		{
-			if(this.Gicone.getBounds()) // Si l'image est déjà chargée (?)
-			{
-				this.Gicone.x = -this.Gicone.getBounds().width/2 ;
- 				this.Gicone.y = this.Gtitre.y+this.Gtitre.getBounds().height ;
 			}
-		}
-		
-		//Fonction qui ouvre la bulle (en tant que fille).
-		// Ici, on charge les futurs dossiers enfants
-		// Ecrase la fonction fille
-		sEtendre()
+			
+		//Fonction qui ouvre la bulle (en tant que fille)
+		this.sEtendre=function()
 			{
 				if(!this.ouvert())	//S'il n'est pas ouvert...
 				{
@@ -155,22 +102,17 @@ class BulleDossier extends Bulle
 					if(!this.childrenLoaded())	//Si les enfants ne sont pas encore chargés
 						{
 					  		var cela=this;
-							setTimeout(function(){cela.loadChildren();},this.dureeOuvertureFermeture());	//on charge APRES que la bulle parent soit ouverte
-
+							setTimeout(function(){cela.loadChildren();},this.dureeOuvertureFermeture()*1000);	//on charge APRES que la bulle parent soit ouverte
 						}
 				}
 			}
 			
-			
-		// ******************************************************************************************************
-		//Fonction qui interroge le serveur et créer les enfants dans le groupe groupeEnfants
-		// open = true : le dossier sera automatiquement ouvert à sa création
-		loadChildren(open)
+		//Fonction qui interroge le serveur et créer les enfants dans le groupe Kchildren
+		this.loadChildren=function(open)
 			{
 				var ceci=this;	//Reference vers le parent (probleme de contexte...)
 				$.post("./sources/PHP/repondeur.php",		//URL de la requete
 						{
-
 							action:"loadChildren",	//Action a executer par le post
 							dossierScan:this.path()	//chemin
 						},
@@ -187,8 +129,8 @@ class BulleDossier extends Bulle
 									}
 								else
 									var hauteurPrecedent=-200;	//On se place à -200 par rapport au parent
-								var droite=1;	//tag qui dit si la bulle enfant doit être à droite (1) ou a gauche (-1)
-								for(var i=0 ; i<listeFichiers.length ; i++)	//Pour chaque enfant récupéré...
+								droite=1;	//tag qui dit si la bulle enfant doit être à droite (1) ou a gauche (-1)
+								for(i=0;i<listeFichiers.length;i++)	//Pour chaque enfant récupéré...
 									{
 										var file=listeFichiers[i]	//...on recupere l'enfant
 										var nom=file.getAttribute("nom")	//...son nom
@@ -210,11 +152,11 @@ class BulleDossier extends Bulle
 											else if(type=="lien")	//Si c'est de type lien...
 												var bulleEnfant=new BulleLien(dos+"/"+nom,nom.replace(".rac",""),lien);
 											else if(type=="texte")	//Si c'est de type texte...
-												var bulleEnfant=new BulleTexte(dos,nom,texte);
+												var bulleEnfant=new BulleTexte(nom,texte);
 											else
 												var bulleEnfant=new Bulle();	//par défaut...
 											bulleEnfant.niveau(ceci.niveau()+1);//Niveau dans l'arborescence
-											bulleEnfant.visible = false;//...Par defaut les enfants sont invisibles
+											bulleEnfant.visible(false);//...Par defaut les enfants sont invisibles
 											//position
 											if(ceci.niveau()==0)	//Si c'est la racine
 												{
@@ -225,23 +167,19 @@ class BulleDossier extends Bulle
 												}
 											else		//Si c'est pas la racine
 												{
-													droite = signe(ceci.lastPositionX());	//On définit le coté en fonction de la position du parent (droite ou gauche)
-
+													droite=signe(ceci.lastPositionX());	//On définit le coté en fonction de la position du parent (droite ou gauche)
 													bulleEnfant.lastPosition({x:droite*200,y:hauteurPrecedent+50});//Par defaut, on place l'enfant, décalé de 50px
-													hauteurPrecedent = bulleEnfant.lastPositionY()+bulleEnfant.getBounds().height;//On décale la hauteur pour l'enfant suivant
+													hauteurPrecedent=bulleEnfant.lastPositionY()+bulleEnfant.height();//On décale la hauteur pour l'enfant suivant
 												}
-											bulleEnfant.alpha = 0 ;
-											bulleEnfant.scale = 0 ;
+											bulleEnfant.opacity(0);
+											bulleEnfant.scale(0);
 											bulleEnfant.ouvert(false);
-											bulleEnfant.redessineConnecteur(); // Utile apres modification de lastPosition
-											if(AFFICHE_MENU) // Si c'est bloqué, on le met "bloqué" (dans le cas où on affiche le menu et qu'on n'est pas la racine)
+											if(bloque=="bloque" && afficheMenu)
 												{
-													if(bloque=="bloque")
-														bulleEnfant.menu.boutonLock.locked(true);
-													else
-														bulleEnfant.menu.boutonLock.locked(false);
+													bulleEnfant.menu.boutonLock.locked(true);
+													bulleEnfant.menu.boutonLock.KarrierePlan.fill(bulleEnfant.menu.boutonLock.couleurClose());
 												}
-										ceci.groupeEnfants.addChild(bulleEnfant);//On ajoute l'enfant au groupe Kenfants
+										ceci.Kenfants.add(bulleEnfant);//On ajoute l'enfant au groupe Kenfants
 									}
 									if(open)
 										ceci.ouvrirEnfants();
@@ -250,14 +188,8 @@ class BulleDossier extends Bulle
 					);//Fin du post
 			}
 			
-			
-			
-			
-			
-			
 		//Fonction qui interroge le serveur et vérifie qu'il y a une icone parmi les fichiers	
-
-		chercheIcone()
+		this.loadIcone=function()
 			{
 				var ceci=this;
 				$.post(		"./sources/PHP/repondeur.php",		//URL de la requete
@@ -274,49 +206,44 @@ class BulleDossier extends Bulle
 					);
 			}
 			
-		//Fonction qui ouvre ou ferme (qui inverse l'état) les enfants *********************************************
-		ouvrirOuFermerEnfants()
+			
+		//Fonction qui ouvre ou ferme (qui inverse l'état) les enfants
+		this.ouvrirOuFermerEnfants=function()
 			{
-
 				if(this.enfantsOuverts())
 					this.fermerEnfants();
 				else
 					this.ouvrirEnfants();
 			}
 
-
-
-
-		//Fonction qui ouvre les enfants ***************************************************************
-		ouvrirEnfants(autocentrage)
+		//Fonction qui ouvre les enfants
+		this.ouvrirEnfants=function(autocentrage)
 			{
 				if(!this.enfantsOuverts())
 					{
 						var ceci=this;
-						var listeEnfants = this.getListeEnfants();
+						var listeEnfants=this.getListeEnfants();
 						if(!this.dejaOuvert())// Si c'est la 1ere ouverture, on replace les enfants avant d'ouvrir (on fait cela au clic, car ça devrait laisser le temps de charger les images)
 							{
 								if(this.niveau()!=0)
 									{
-
 										var tailleTotale=-this.espaceEntreBoite();
-										for (var i=0 ; i<listeEnfants.length ; i++) // On additionne les dimentsions pour connaitre la taille totale
+										for (i=0;i<listeEnfants.length;i++)
 											{
-												tailleTotale+=listeEnfants[i].getBounds().height+this.espaceEntreBoite();
+												tailleTotale+=listeEnfants[i].getHeight()+this.espaceEntreBoite();
 											}
-										var positionY=-tailleTotale/2; // On en déduit la position du début de la lsite des bulles
-										for (var i=0 ; i<listeEnfants.length ; i++) // On place les bulle
+										var positionY=-tailleTotale/2;
+										for (i=0;i<listeEnfants.length;i++)
 											{
-												var enfant = listeEnfants[i];
-												positionY += enfant.getBounds().height/2;
+												var enfant=listeEnfants[i];
+												positionY+=enfant.getHeight()/2;
 												enfant.lastPositionY(positionY);
-												positionY += enfant.getBounds().height/2 + this.espaceEntreBoite();
-												enfant.redessineConnecteur();
+												positionY+=enfant.getHeight()/2+this.espaceEntreBoite();
 											}
 									}
 								this.dejaOuvert(true);
 							}
-						for (var i=0 ; i<listeEnfants.length ; i++)
+						for (i=0;i<listeEnfants.length;i++)
 							{
 								var enfant=listeEnfants[i];
 								enfant.sEtendre();
@@ -327,18 +254,15 @@ class BulleDossier extends Bulle
 						//Autocentrage
 						if(autocentrage == undefined)	//Si pas passé en argument
 							var autocentrage=autoCentre;	//...on prend la variable globale
-							
-						if(autocentrage && this.getRayonToCenter()>rayonAutoCentre*rayonAutoCentre)
+						if(/*this.niveau() &&*/ autocentrage && Math.pow(this.getAbsolutePosition().x-scene.width()/2,2)+Math.pow(this.getAbsolutePosition().y-scene.height()/2,2)>rayonAutoCentre*rayonAutoCentre)
 							setTimeout(function(){ceci.centreBulle();},delaiAutoCentre);
 
 
 						//Fermeture des freres
 						if(autoFermeFreres && this.niveau()!=0)	//Si on autorise l'autofermeture des freres, et que c'est pas la 1ere bulle..
 							{
-
 								var listeFreres=this.parent.children;	//y compris soit-meme
-
-								for(var i=0;i<listeFreres.length;i++)
+								for(i=0;i<listeFreres.length;i++)
 									{
 										var enfant=listeFreres[i];
 										if(enfant!=this && enfant.type()=="dossier")	//Si c'est pas nous meme et que c'est un dossier
@@ -349,33 +273,65 @@ class BulleDossier extends Bulle
 							}
 					}//if !enfantsouverts
 			}
-			
-			
-			
-			
-		//Fonction qui ferme les enfants ****************************
-		fermerEnfants(autocentrage)
 
+		//Fonction qui ferme les enfants
+		this.fermerEnfants=function(autocentrage)
 			{
 				if(this.enfantsOuverts())
 					{
-						var ceci = this;
-						var listeEnfants = this.getListeEnfants();
-						for(var i = 0 ; i<listeEnfants.length ; i++)
+						var ceci=this;
+						var listeEnfants=this.getListeEnfants();
+						for (i=0;i<listeEnfants.length;i++)
 							{
-								var enfant = listeEnfants[i];
+								var enfant=listeEnfants[i];
 								enfant.seRefermer();
 							}
 						this.enfantsOuverts(false);
 
 						//Autocentrage
 						if(autocentrage == undefined)	//Si pas passé en argument
-							var autocentrage = autoCentre;	//...on prend la variable globale
-						if(autocentrage && this.niveau() && this.parent.parent.getRayonToCenter()>rayonAutoCentre*rayonAutoCentre)
+							var autocentrage=autoCentre;	//...on prend la variable globale
+						if(autocentrage && this.niveau() && Math.pow(this.parent.parent.getAbsolutePosition().x-scene.width()/2,2)+Math.pow(this.parent.parent.getAbsolutePosition().y-scene.height()/2,2)>rayonAutoCentre*rayonAutoCentre)
 							setTimeout(function(){ceci.parent.parent.centreBulle();},delaiAutoCentre);
 					}
 			}
+			
+	//==========================
+	//Graphismes
+	//==========================
+		
+		//Icone (deja chargée par héritage) on se contenten juste de bien la placer
+		this.Kicone.x(-200);
+		this.Kicone.y(this.Ktexte.y()+this.Ktexte.height());
+		
+		//Groupe Kinetic contenant les enfants (autres bulles...)
+		this.Kenfants=new Kinetic.Group();
+		
+				
+		this.add(this.Kenfants);
+		this.Kenfants.setZIndex(0);//Mis en arreire plan pour cacher les connecteurs des enfants derriere le parent
+		
+		
+	//==========================
+	//Evenements
+	//==========================
+	
+		//Action a effectuer lors d'un double click
+		this.actionDoubleClick=function()
+		{
+			this.ouvrirOuFermerEnfants();
+		}
 
 
+		
+		
+	//==========================
+	//Construction...
+	//==========================
+
+	this.loadIcone();
+		
 }
+BulleDossier.prototype = Object.create(Bulle.prototype);//On recopie le prototype de Bulle
+BulleDossier.prototype.constructor = BulleDossier;//On recopie le constructeur de Noeud dans son prototype
 

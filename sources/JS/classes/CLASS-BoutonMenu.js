@@ -1,118 +1,133 @@
-var BoutonMenu = function(__titre__)
+
+// Bouton "abstraite", pour le bouton
+class BoutonMenu extends createjs.Container
 {
 	//==========================
 	//Constructeur issu de l'heritage
 	//==========================
+		constructor(__titre__)
+		{
+			super(); //Constructeur de la classe mère
+			this.name = "Bouton Menu"
+			
+			this._titre=__titre__
+			
+			
+			// GRAPHISMES
+			
+			this.cursor = "pointer";
+			
+			this.Gcontenu = new createjs.Container() ; //Groupe qui contient titre, image, etc.
+			
+			this.Gtitre = new createjs.Text(__titre__, "10px Calibri", "black");
+			this.Gtitre.x = 2;
+			this.Gtitre.y = 2;
+			this.Gcontenu.addChild(this.Gtitre)		
+			
 
-		Kinetic.Group.call(this);
+			this.GarrierePlan = new createjs.Shape();
+			this.addChild(this.GarrierePlan);
+			this.GarrierePlan.shadow = new createjs.Shadow("rgba(0,0,0,0.5)", 2, 2, 3);
+			
+			
+			this.addChild(this.Gcontenu); // Mis en dernier pour qu'il soit au premier plan
+			
+			this.redessineArrierePlan() // Dessine / redessine le rectangle
 
 
+			// EVENEMENTS
+			
+			
+			this.on("click",this.actionClick,null,false,{objet:this});
+			
+			this.on("mouseover",this.actionMouseOver);
+			this.on("mouseout",this.actionMouseOut) ;
+			
+		}
+		
 	//==========================
 	//Variables Membres
 	//==========================
 	
-		this._titre=__titre__
-		this._couleurBouton="yellow";
-
+		_titre = "";
+		_couleurBouton = "yellow";
+		_margin = 4;
+		_arrondi = 4;
+		
+		
 	//==========================
 	//getter/setter
 	//==========================
-
-		this.couleurBouton=function(c)
+		couleurBouton(c)
 			{
 				if(typeof(c)!='undefined')
+				{
 					this._couleurBouton=c;
+					this.redessineArrierePlan();
+				}
 				return this._couleurBouton;
 			}
 
-		this.titre=function(t)
+		titre(t)
 			{
 				if(typeof(t)!='undefined')
 					this._titre=t;
 				return this._titre;
 			}
+			
+		margin(m)
+			{
+				if(typeof(m)!='undefined')
+					this._margin=m;
+				return this._margin;
+			}
+		
+		arrondi(a)
+			{
+				if(typeof(a)!='undefined')
+					this._arrondi=a;
+				return this._arrondi;
+			}
+			
 	//==========================
 	//Autres fonctions membres
 	//==========================
 
-		this.actionClick=function()
+
+		//Action à réaliser au clic
+		actionClick()
 		{
 			
 		}
 	
-		this.actionMouseOver=function()
+		//Action à réaliser au passage de la souris
+		actionMouseOver()
 		{
-			this.x(this.x()+1);
-			this.y(this.y()+1);
-			this.KarrierePlan.shadowBlur(1);
-			this.KarrierePlan.shadowOpacity(0.8);
-			this.KarrierePlan.shadowOffset({x:1,y:1});
-			scene.draw()
+			this.x += 1;
+			this.y += 1;
+			this.GarrierePlan.shadow.blur = 1;
+			this.GarrierePlan.shadow.color = "rgba(0,0,0,0.8)";
+			this.GarrierePlan.shadow.offsetX = 1 ;
+			this.GarrierePlan.shadow.offsetY = 1 ;
 		}
 	
-		this.actionMouseOut=function()
+		actionMouseOut()
 		{
-			this.x(this.x()-1);
-			this.y(this.y()-1);
-			this.KarrierePlan.shadowBlur(3);
-			this.KarrierePlan.shadowOpacity(0.5);
-			this.KarrierePlan.shadowOffset({x:2,y:2});
-			scene.draw()
+			this.x -= 1;
+			this.y -= 1;
+			this.GarrierePlan.shadow.blur = 3;
+			this.GarrierePlan.shadow.color = "rgba(0,0,0,0.5)";
+			this.GarrierePlan.shadow.offsetX = 2 ;
+			this.GarrierePlan.shadow.offsetY = 2 ;
 		}
 		
-	//==========================
-	//Graphismes
-	//==========================
-
-		this.Ktitre=new  Kinetic.Text({
-					   text: this.titre(),
-					   fontSize: 10,
-						   fontFamily: 'Calibri',
-					   fill: 'black',
-					   align:"left",
-					   x:2,
-					   y:2
-					});
-					
-		this.KarrierePlan=new Kinetic.Rect({
-								width: this.Ktitre.width()+4,
-								height: this.Ktitre.height()+4,
-								fill: this.couleurBouton(),
-								stroke: null,//this.strokeColor(),
-								cornerRadius: 4,
-								x:0,
-								y:0,
-								shadowColor: 'black',
-								shadowBlur: 3,
-								shadowOffset: {x:2,y:2},
-								shadowOpacity: 0.5,
-								shadowEnabled:true
-							});
-							
-							
-		this.add(this.KarrierePlan);
-		this.add(this.Ktitre);
-
-	//==========================
-	//Evenements
-	//==========================
-
 		
-		var cela=this;
-		this.on("click",function(){cela.actionClick();});
-		
-		this.on("mouseover",function(){cela.actionMouseOver();});
-		this.on("mouseout",function(){cela.actionMouseOut();});
-
-	//==========================
-	//Construction...
-	//==========================
-
-
-
+		redessineArrierePlan()
+		{
+			//console.log(this.Gcontenu.getBounds())		
+			this.GarrierePlan.graphics.clear().beginFill(this._couleurBouton).drawRoundRect(0, 0, this.Gcontenu.getBounds().width+this._margin,    this.Gcontenu.getBounds().height+this._margin, this._arrondi,    this._arrondi, this._arrondi, this._arrondi);
+		}
+	
 }
-BoutonMenu.prototype = Object.create(Kinetic.Group.prototype);//On recopie le prototype de Kinteic.Group
-BoutonMenu.prototype.constructor = BoutonMenu;//On recopie le constructeur de Noeud dans son prototype
-
 
 

@@ -1,17 +1,12 @@
-// Menu qui contient des boutons
-class Menu extends createjs.Container
+var Menu = function()
 {
-
 	//==========================
 	//Constructeur issu de l'heritage
 	//==========================
-		constructor()
-		{
-			super(); //Constructeur de la classe mère
-			this.name = "Menu"
-		}
-		
-		
+
+		Kinetic.Group.call(this);
+
+
 	//==========================
 	//Variables Membres
 	//==========================
@@ -30,15 +25,15 @@ class Menu extends createjs.Container
 
 
 		//Ajoute un bouton à la bonne place
-		addBouton(bouton)
+		this.addBouton=function(bouton)
 		{
 			if(this.children.length)
 			{
-				var pos = this.children[this.children.length-1].x + this.children[this.children.length-1].getBounds().width;
-				bouton.x = pos;
+				var pos=this.children[this.children.length-1].x()+this.children[this.children.length-1].width();
+				bouton.x(pos);
 			}
-			bouton.y = -bouton.getBounds().height;
-			this.addChild(bouton);
+			bouton.y(-bouton.height());
+			this.add(bouton);
 		}
 	
 	//==========================
@@ -50,7 +45,19 @@ class Menu extends createjs.Container
 	//==========================
 	//Evenements
 	//==========================
+
+	
 		
+
+	//==========================
+	//Construction...
+	//==========================
+
+
+
 }
+Menu.prototype = Object.create(Kinetic.Group.prototype);//On recopie le prototype de Kinteic.Group
+Menu.prototype.constructor = Menu;//On recopie le constructeur de Noeud dans son prototype
+
 
 

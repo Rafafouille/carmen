@@ -12,6 +12,7 @@ if(isset($_POST['action']))	$action=$_POST['action'];
 
 $pathLock=""; //fichier (ou dossier) à bloquer
 if(isset($_POST['pathLock']))	$pathLock="../../".$_POST['pathLock'];
+
 $dossierLock=dirname($pathLock);
 $fichierLock=basename($pathLock);
 
@@ -87,7 +88,7 @@ if($action=="loadChildren" || $action=="loadIcone")
 //=============================================================
 if($action=="lock")
 {
-	if($_SESSION['connecte'])	//Si on est connecté
+	if($_SESSION['admin'])	//Si on est connecté
 	{
 		if(file_exists($pathLock))//Si le fichier existe...
 		{
@@ -96,8 +97,8 @@ if($action=="lock")
 				{
 					//Suppression d'un éventuel homonyme
 					//echo "\n\n=====================================\n";
-					$cpt=0;	//Compteur d'enfant...
-					$fichierLocks=$xml->xpath('/config/interdits/fichier');//interdits[0]->fichier; //Liste des fichiers
+					$cpt = 0;	//Compteur d'enfant...
+					$fichierLocks = $xml->xpath('/config/interdits/fichier');//interdits[0]->fichier; //Liste des fichiers
 					foreach($fichierLocks as $fic)	//Pour chaque fichier...
 					{
 						if($fic->nom==$fichierLock)	//Si le nom correspond à celui qu'on doit supprimer
@@ -132,7 +133,7 @@ if($action=="unlock")
 {
 
 
-	if($_SESSION['connecte'])	//Si on est connecté
+	if($_SESSION['admin'])	//Si on est connecté
 	{
 		if(file_exists($pathLock))//Si le fichier existe...
 		{

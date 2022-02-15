@@ -6,7 +6,7 @@ session_start();
 //===========================================
 include_once("./sources/PHP/parametresDefaut.php");	//Par defaut...
 include_once("./parametres.php");	//...ecrasée par les parametres perso
-$version="16.10.3";
+$version="22.02.15";
 
 
 //===========================================
@@ -29,7 +29,7 @@ if(isset($_POST['login-mdp'])) $login=$_POST['login-mdp'];
 $root=$rootDefaut;
 if($autoriseRootParGet && isset($_GET['dossier']))
 	$root=$_GET['dossier'];
-if(!$autoriseDossierParent)
+if(!$autoriseDossierParent)	// Remplace les dossiers en amont du dossier principal par le dossier principal
 	$root=str_replace('..','./',$root);
 if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par "/"
 	$root=$rootDefaut;
@@ -66,7 +66,7 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 		<!-- Variables d'initialisation -->
 		<script>
 			<?php
-					echo "afficheMenu=";
+					echo "AFFICHE_MENU=";
 						echo $_SESSION['admin'] ? "true;\n" : "false;\n";
 					echo "\t\t\touvrirPremiereBulle=";
 						echo $ouvrirPremiereBulle ? "true;\n" : "false;\n";
@@ -109,20 +109,13 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 		<!-- JQUERY -->
 		<!--<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>-->
 		<script src="./sources/JS/libraries/jquery.min.js"></script>
-		<!--<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/themes/smoothness/jquery-ui.css" />-->
 		<link rel="stylesheet" href="./sources/JS/libraries/jquery-ui.min.css" />
-		<!--<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>-->
 		<script src="./sources/JS/libraries/jquery-ui.min.js"></script>
-
-		<!-- kineticJs -->
-		<script src="./sources/JS/libraries/kinetic-v5.1.0.js"></script>
-		<script src="./sources/JS/libraries/kineticPlus.js"></script>
 		
-		<!-- RaphaelJS -->
-		<!--<script src="./sources/JS/libraries/raphael.js"></script>-->
-		
-		<!-- FabricJS -->
-		<!--<script src="./sources/JS/libraries/fabric.min.js"></script>-->
+		<!-- CreateJS -->
+		<script src="./sources/JS/libraries/createjs.min.js"></script>
+				
+		<script src="./sources/JS/easelJS-zoom.js"/></script>
 		
 		<!-- scripts perso -->
 		<script src="./sources/JS/fonctions.js"/></script>
@@ -144,15 +137,15 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 	</head>
 
 	<body style="margin:0px;padding:0px;">
+	
 		<div id="entete">
 		</div>
 
 
 		<!--------- Scene ou va se dessiner  la carte mentale --------->
-		<div id="scene" style="margin:0px;padding:0px;">⌛ Chargement... (Si ce message reste apparent après plusieurs secondes, c'est qu'il y a un problème.
-						reportez-vous au site <a href="http://carmen.allais.eu">carmen.allais.eu</a>)</div>
-
-
+		<canvas id="scene" width="500" height="300" style="margin:0px;padding:0px;">⌛ Chargement... (Si ce message reste apparent après plusieurs secondes, c'est qu'il y a un problème.<br/>Reportez-vous au site <a href="http://carmen.allais.eu">carmen.allais.eu</a>)
+		
+		</canvas>
 
 
 		<!-- BOUTON LOGIN  ----------------------------------------->
@@ -175,11 +168,24 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 				Erreur de connection : <span></span>
 			</div>
 			<form id="formLogin">
-				<p>
-					<label for="login-user">Utilisateur : </label><input type="text" id="login-user" name="login-user"  placeholder="Votre identifiant" size="25"/>
-				<br/>
-					<label for="login-mdp">Mot de passe : </label><input type="password" id="login-mdp" name="login-mdp" placeholder="Votre mot de passe" size="25"/>
-				</p>
+				<table>
+					<tr>
+						<td>
+							<label for="login-user">Utilisateur : </label>
+						</td>
+						<td>
+							<input type="text" id="login-user" name="login-user"  placeholder="Votre identifiant" size="25"/>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<label for="login-mdp">Mot de passe : </label>
+						</td>
+						<td>
+							<input type="password" id="login-mdp" name="login-mdp" placeholder="Votre mot de passe" size="25"/>
+						</td>
+					</tr>
+				</table>
 			</form>
 				<?php }
 			else			//Si on est connecté
@@ -199,6 +205,7 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 		<script>
 				$("#dialogLogin").dialog({
 					modal:true,
+					width: "550px",
 					autoOpen:false,
 					buttons:{"Connection":connection}
 				});
@@ -210,6 +217,7 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 		<script>
 				$("#dialogLogin").dialog({
 					modal:true,
+					width: "550px",
 					autoOpen:false,
 					buttons:{"Déconnection":deconnection}
 				});
