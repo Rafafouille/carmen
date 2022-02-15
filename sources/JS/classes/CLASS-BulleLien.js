@@ -19,14 +19,7 @@ class BulleLien extends Bulle
 		// ---------------------------
 	
 		//Action a effectuer lors d'un double click
-		this.groupeBulle.on("click",function(event){
-				if(event.nativeEvent.which==1 && !this.parent._vientDeBouger) // Si click gauche
-				{
-					window.open(this.parent.lien());
-				}
-				else
-					this.parent._vientDeBouger = false;
-			});
+		this.groupeBulle.on("click", this.actionClic,null,false,{ceci:this});
 		
 		
 	}
@@ -95,7 +88,11 @@ class BulleLien extends Bulle
 		
 		
 		
-		
+		actionClic(event,data)
+		{
+			if(estCeQueCEstUnVraiClic(event,data.ceci))
+				window.open(this.parent.lien());
+		}
 		
 		
 		

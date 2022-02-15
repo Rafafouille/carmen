@@ -23,16 +23,7 @@ class BulleFichier extends Bulle
 		
 		//Action a effectuer lors d'un double click
 //		var cceci = this;
-		this.groupeBulle.on("click", function(event,data) {
-				 if(activeMiroir)
-						window.open("sources/PHP/miroir.php?miroir="+data.cible.idLien());
-				else
-						window.open(cceci.path());
-				return false;
-			 },
-			 null,
-			 false,
-			 {cible:this});
+		this.groupeBulle.on("click", this.actionClic,null,false,{ceci:this});
 	}
 
 	//==========================
@@ -191,6 +182,20 @@ class BulleFichier extends Bulle
 				this.iconeURL(cheminIcone);
 
 			}
+			
+			
+	actionClic(evt,data)
+	{
+		var ceci = data.ceci
+		if(estCeQueCEstUnVraiClic(evt,ceci))
+		{
+			if(activeMiroir)
+					window.open("sources/PHP/miroir.php?miroir="+ceci.idLien());
+			else
+					window.open(ceci.path());
+			return false;
+		}
+	}
 }
 
 

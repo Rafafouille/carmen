@@ -139,6 +139,8 @@ if(preg_match("#\./*$#",$root) || preg_match("#^/#",$root))	//Si ca commence par
 	<body style="margin:0px;padding:0px;">
 	
 		<div id="entete">
+			<div id="entete1"></div>
+			<div id="entete2"></div>
 		</div>
 
 

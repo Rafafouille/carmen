@@ -74,3 +74,24 @@ function signe(x)
 			return -1;
 		return 1;
 	}
+	
+	
+// Fonction qui doit discriminer si c'est un vrai clic ou non
+function estCeQueCEstUnVraiClic(evt,obj)
+{
+	var clic = false
+	if (evt.pointerID==-1 && evt.nativeEvent.which==1)	// Si un clic de souris, et que c'est un clic gauche
+		clic = true
+	if (evt.pointerID==0 && !CLIC_AVEC_2_DOIGTS) // Si c'est un doigt n°1, et qu'il n'y a pas de doigts n°2
+		clic = true
+	if(clic)
+	{
+		if(obj._vientDeBouger) // Si on vient de faire un pressmove
+		{
+			obj._vientDeBouger = false ; //On ouvre pas
+			return false
+		}
+		return true
+	}
+	return false
+}

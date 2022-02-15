@@ -19,9 +19,11 @@ function creeZoom(cible, stage, callback, options)
 	// Wheel  (attention : l'évenement est défini via un élément html (canvas), ce qui est différent de createjs
 	stage.canvas.addEventListener("wheel",function(event){actionMolette(event,{cible:cible,stage:stage})})
 	
+	// VARIABLES GLOBALES
 	// Création de deux éléments qui correspondent à la position des doigts
 	DOIGT1_ZOOM_POSITION = {x:null,y:null}
 	DOIGT2_ZOOM_POSITION = {x:null,y:null}
+	CLIC_AVEC_2_DOIGTS = false ;	// Passe à true avec l'appui du second doigt. Passe à fase avec le retrait du dernier doigt
 	
 	//Suivit des doigts
 	stage.on("stagemousemove",suivreDoigts,null,false,{cible:cible})
@@ -55,6 +57,7 @@ function evenementMoletteDown(event,data)
 	else if(event.pointerID==1)
 	{
 		DOIGT2_ZOOM_POSITION = {x:event.stageX, y:event.stageY}//data.cible.globalToLocal(event.stageX, event.stageY)
+		CLIC_AVEC_2_DOIGTS = true;
 	}
 	
 }
@@ -143,10 +146,16 @@ function releveDoigts(event,data)
 	if(event.pointerID==0)	// Si c'est le doigts 1 qui se leve
 	{
 		DOIGT1_ZOOM_POSITION = {x:null, y:null};
+		if(DOIGT2_ZOOM_POSITION.x==null) // Si c'était le dernier doigt
+			setTimeout(function(){CLIC_AVEC_2_DOIGTS = false;},100) // On retarde un peu pour que les autres événements du programme aient le temps de voir qu'il y avait 2 clic avant de relacher
+			
+			
 	}
 	else if(event.pointerID==1)	// Si c'est le doigts 2 qui se leve
 	{
 		DOIGT2_ZOOM_POSITION = {x:null, y:null};
+		if(DOIGT1_ZOOM_POSITION.x==null) // Si c'était le dernier doigt
+			setTimeout(function(){CLIC_AVEC_2_DOIGTS = false;},100) // On retarde un peu pour que les autres événements du programme aient le temps de voir qu'il y avait 2 clic avant de relacher
 	}
 }
 

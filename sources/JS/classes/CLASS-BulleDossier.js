@@ -21,18 +21,8 @@ class BulleDossier extends Bulle
 		this.chercheIcone(); // Cherche une icone sur le serveur
 		
 		//Evévements
-		var ceci=this;
 
-		this.groupeBulle.on("click", function(evt)
-					{
-						if(evt.nativeEvent.which==1) // Si c'est un click gauche
-						{
-							if(this.parent._vientDeBouger) // Si on vient de faire un pressmove
-								this.parent._vientDeBouger = false ; //On ouvre pas
-							else
-								ceci.ouvrirOuFermerEnfants();	
-						}
-					});
+		this.groupeBulle.on("click", this.actionClic,null,false,{ceci:this});
 					
 		this.groupeEnfants.name = "groupeEnfants"
 	}
@@ -113,26 +103,7 @@ class BulleDossier extends Bulle
 	//Autres fonctions membres
 	//==========================
 	
-		// ******************************************************************************************************
-		//Redessine la bulle (pour remettre le noms aux dimensions) dans le cas particulier des dossiers
-		// ECRASE L'ANCIEN (classe mere Bulle)
-		/*redessine()
-			{
-				//Texte
-				this.redessineTitre()
-				//Image (si elle existe)
-				this.replaceIcone()
-				//rectangle
-				this.redessineContour();
-				
-				this.Kcontour.x(Math.min(this.Ktexte.x(),this.Kicone.x())-this.margin());
-				this.Kcontour.y(this.Ktexte.y()-this.margin());
-				this.Kcontour.width(Math.max(this.Ktexte.width(),this.Kicone.width())+2*this.margin());
-				this.Kcontour.height(this.Ktexte.height()+this.Kicone.height()+2*this.margin());
-				
-				this.groupeBulle.x(-this.groupeBulle.getWidth()/2-this.Kcontour.x());	//Le Kcontour est du au fait que l'origine du groupeBulle est le texte (et non le bord de la bulle)
-				this.groupeBulle.y(-this.groupeBulle.getHeight()/2-this.Kcontour.y());
-			}*/
+
 		// Fonction qui calcule la position de l'icone dans le cas d'un dossier
 		// REMPLACE L'ANCIEN (classe mere Bulle)
 		replaceIcone()
@@ -375,6 +346,17 @@ class BulleDossier extends Bulle
 							setTimeout(function(){ceci.parent.parent.centreBulle();},delaiAutoCentre);
 					}
 			}
+
+
+		// Evenement associé au clic pour ouvrir
+		actionClic(evt,data)
+		{
+			var ceci = data.ceci
+			if(estCeQueCEstUnVraiClic(evt,ceci))
+			{
+				ceci.ouvrirOuFermerEnfants();	
+			}
+		}
 
 
 }
